@@ -1,7 +1,9 @@
 package se.kth.hopsworks.rest;
 
-import io.hops.KafkaFacade;
+import io.hops.kafka.KafkaFacade;
 import io.hops.hdfs.HdfsLeDescriptorsFacade;
+import io.hops.kafka.KafkaFacade;
+import io.hops.kafka.ProjectTopics;
 import io.hops.kafka.TopicDTO;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -65,6 +67,9 @@ import se.kth.hopsworks.meta.entity.Template;
 import se.kth.hopsworks.meta.exception.DatabaseException;
 import se.kth.hopsworks.user.model.Users;
 import se.kth.hopsworks.users.UserFacade;
+import io.hops.kafka.KafkaFacade;
+import io.hops.kafka.ProjectTopics;
+import io.hops.kafka.TopicDetailDTO;
 import se.kth.hopsworks.util.Settings;
 
 @RequestScoped
@@ -86,6 +91,8 @@ public class KafkaService {
   private AsynchronousJobExecutor async;
   @EJB
   private UserFacade userfacade;
+  @EJB
+  private KafkaFacade kafkaFacade;
   @EJB
   private Settings settings;
   @EJB
@@ -143,6 +150,9 @@ public class KafkaService {
       throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
           "Incomplete request!");
     }
+    //create the topic in the database and the Kafka cluster
+    kafkaFacade.createTopicInProject(this.project, topicName); 
+    
     json.setSuccessMessage("The Topic has been created.");
     return noCacheResponse.getNoCacheResponseBuilder(Response.Status.OK).entity(
         json).build();
@@ -160,6 +170,9 @@ public class KafkaService {
       throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
           "Incomplete request!");
     }
+    //remove the topic from the database and Kafka cluster
+    kafkaFacade.removeTopicFromProject(this.project, topicName);
+    
     json.setSuccessMessage("The topic has been removed.");
     return noCacheResponse.getNoCacheResponseBuilder(Response.Status.OK).entity(
         json).build();
@@ -171,14 +184,14 @@ public class KafkaService {
   @AllowedRoles(roles = {AllowedRoles.DATA_OWNER, AllowedRoles.DATA_SCIENTIST})
   public Response getDetailsTopic(@PathParam("name") String topicName,
       @Context SecurityContext sc,
-      @Context HttpServletRequest req) throws AppException {
+      @Context HttpServletRequest req) throws AppException, Exception {
     JsonResponse json = new JsonResponse();
     if (projectId == null) {
       throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
           "Incomplete request!");
     }
 
-    TopicDTO topic = kafka.getTopicDetails(project, topicName);
+    TopicDetailDTO topic = kafka.getTopicDetails(project, topicName);
     return noCacheResponse.getNoCacheResponseBuilder(Response.Status.OK).entity(
         topic).build();
   }
