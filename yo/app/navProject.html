@@ -16,7 +16,7 @@
         </a>
       </li>
       
-      <li ng-click="projectCtrl.goToJobs()" ng-show="projectCtrl.showJobs()">
+      <li ng-click="projectCtrl.goToJobs()" ng-show="projectCtrl.showJobs()" id="jobsTab">
         <a>
           Jobs <span class="sub_icon fa fa-cogs fa-lg pull-right"></span>
         </a>
@@ -44,9 +44,7 @@
           Kafka<span class="sub_icon fa fa-linkedin-square fa-lg pull-right"></span>
         </a>
       </li>
-
-      
-      <li ng-click="projectCtrl.goToDatasets()">
+      <li ng-click="projectCtrl.goToDatasets()" style="margin-top:40px;">
         <a>
           Data Sets<span class="sub_icon fa fa-folder-open fa-lg pull-right"></span>
         </a>
@@ -74,3 +72,18 @@
 
   </nav>
 </aside>
+
+<tour class="ng-scope" step="projectCtrl.tourService.currentStep_TourTwo" post-tour="closeTour()" ng-if="projectCtrl.showJobs() && projectCtrl.loadedView">
+    <virtual-step
+        id="TourTwo"
+        class="ng-scope"
+        tourtip="Click Next, OR click on the Job tab to continue"
+        tourtip-step="0"
+        tourtip-element="#jobsTab"
+        tourtip-placement="right"
+        tourtip-next-label="Next"
+        on-proceed="projectCtrl.goToJobs()"
+        tourtip-offset-vertical="-25"
+        tourtip-offset-horizontal="-13"
+        ></virtual-step>
+</tour> 
