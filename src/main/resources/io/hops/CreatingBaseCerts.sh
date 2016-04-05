@@ -1,4 +1,4 @@
-## Execute as root
+#!/bin/bash
 
 #1 Prepare the directories
 mkdir /root/ca /root/ca/intermediate
@@ -62,7 +62,7 @@ chmod 444 intermediate/certs/intermediate.cert.pem
 openssl verify -CAfile certs/ca.cert.pem \
       intermediate/certs/intermediate.cert.pem
 
-#6 Create the certificate chain file
+#8 Create the certificate chain file
 cat intermediate/certs/intermediate.cert.pem \
       certs/ca.cert.pem > intermediate/certs/ca-chain.cert.pem
 

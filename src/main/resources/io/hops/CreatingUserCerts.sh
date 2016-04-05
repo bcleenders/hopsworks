@@ -1,9 +1,13 @@
-#### Run as root ####
-### Sign server and client certificates ###
+#!/bin/bash
+
+if [ $# -ne 2  ]; then
+ echo "incorrect usage"
+ exit 1
+fi
 
 #Variables
-PROJECTID="13"
-USERID="paul"
+PROJECTID="$1"
+USERID="$2"
 
 #1 Create a user key
 cd /root/ca
@@ -27,6 +31,6 @@ openssl ca -batch -config intermediate/openssl.cnf \
 
 chmod 444 intermediate/certs/${PROJECTID}__${USERID}.cert.pem
 
-#3 CA certificate chain
+#3 Verify the intermediate certificate
 openssl verify -CAfile intermediate/certs/ca-chain.cert.pem \
       intermediate/certs/${PROJECTID}__${USERID}.cert.pem
