@@ -89,8 +89,9 @@ public class KafkaFacade {
             }
         }
 
-        throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
-                "No Kafka topics found in this project.");
+       // throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
+       //         "No Kafka topics found in this project.");
+       return null;
     }
 
     private int getPort(String zkIp) {
