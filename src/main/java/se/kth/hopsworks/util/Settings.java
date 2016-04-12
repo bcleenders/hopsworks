@@ -455,7 +455,7 @@ public class Settings {
   public static final String CA_DIR = "/srv/glassfish/domain1/config/ca/intermediate/";
   public static final String CA_CERT_DIR = CA_DIR + "certs/";
   public static final String CA_KEY_DIR = CA_DIR + "private/";
-  public static final String SSL_CREATE_CERT_SCRIPTNAME = "CreatingCerts.sh";
+  public static final String SSL_CREATE_CERT_SCRIPTNAME = "createusercerts.sh";
   public static final int MAX_USERNME_LEN = 32;
   public static final int MAX_USERNAME_LEN = 8;
   public static final int MAX_USERNAME_SUFFIX = 99;

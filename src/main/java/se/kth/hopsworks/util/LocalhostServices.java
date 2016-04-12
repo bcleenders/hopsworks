@@ -79,7 +79,7 @@ public class LocalhostServices {
   }
   
   @Asynchronous
-  public static String createCertificates(String projectId, String userId, String glassfishDir) throws IOException {
+  public static String createCertificates(String projectId, String userId, String glassfishIntCaDir) throws IOException {
     
     String sslCertFile = Settings.CA_CERT_DIR + projectId + "__" + userId + ".cert.pem";
     String sslKeyFile = Settings.CA_KEY_DIR + projectId + "__" + userId + ".key.pem";
@@ -97,7 +97,7 @@ public class LocalhostServices {
     commands.add("/bin/bash");
     commands.add("-c");
     // Add CreatingCerts.sh to hopsworks-chef?
-    commands.add(glassfishDir + "/" + Settings.SSL_CREATE_CERT_SCRIPTNAME + " " + projectId + "__" + userId);
+    commands.add(glassfishIntCaDir + "/" + Settings.SSL_CREATE_CERT_SCRIPTNAME + " " + projectId + "__" + userId);
 
     SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commands);
     String stdout = "", stderr = "";
