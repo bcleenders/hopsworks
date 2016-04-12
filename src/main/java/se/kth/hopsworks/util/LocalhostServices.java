@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.Asynchronous;
 
 public class LocalhostServices {
 
@@ -77,14 +78,16 @@ public class LocalhostServices {
     return stdout;
   }
   
-   // UNDER CONSTRUCTION - DONT CALL
-   public static String createSSLUserCerts(String projectId, String userId, String glassfishDir) throws IOException {
-     String sslCertFile = Settings.CA_CERT_DIR + projectId + "__" + userId + ".pem";
-     String sslKeyFile = Settings.CA_KEY_DIR + projectId + "__" + userId + ".pem";
+  // Remember domain example = "projectId__userID"
+  @Asynchronous
+  public static String createCertificates(String domain, String glassfishDir) throws IOException {
+    
+    String sslCertFile = Settings.CA_CERT_DIR + domain + ".pem";
+    String sslKeyFile = Settings.CA_KEY_DIR + domain + ".pem";
 
     if ( new File(sslCertFile).exists() == false ||
-         new File(sslKeyFile).exists() == false)
-             {
+         new File(sslKeyFile).exists() == false) {
+             
       throw new IOException("Certs exist already: " + sslCertFile + "&" + sslKeyFile);
     }
     
@@ -94,7 +97,8 @@ public class LocalhostServices {
     List<String> commands = new ArrayList<>();
     commands.add("/bin/bash");
     commands.add("-c");
-    commands.add(glassfishDir + "/" + Settings.SSL_CREATE_CERT_SCRIPTNAME + " " + projectId + " " + userId);
+    // Add CreatingCerts.sh to hopsworks-chef?
+    commands.add(glassfishDir + "/" + Settings.SSL_CREATE_CERT_SCRIPTNAME + " " + domain);
 
     SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commands);
     String stdout = "", stderr = "";

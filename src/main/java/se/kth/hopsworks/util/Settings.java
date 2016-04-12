@@ -454,7 +454,7 @@ public class Settings {
   public static final String HOMEDIR = "/home/glassfish/";
   public static final String CA_CERT_DIR = "/root/ca/intermediate/certs/";
   public static final String CA_KEY_DIR = "/root/ca/intermediate/private/";
-  public static final String SSL_CREATE_CERT_SCRIPTNAME = "CreatingUserCerts.sh";
+  public static final String SSL_CREATE_CERT_SCRIPTNAME = "CreatingCerts.sh";
   public static final int MAX_USERNME_LEN = 32;
   public static final int MAX_USERNAME_LEN = 8;
   public static final int MAX_USERNAME_SUFFIX = 99;
