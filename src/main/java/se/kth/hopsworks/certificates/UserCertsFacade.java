@@ -1,5 +1,9 @@
 package se.kth.hopsworks.certificates;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -11,6 +15,7 @@ import javax.ws.rs.core.Response;
 import se.kth.hopsworks.rest.AppException;
 import se.kth.bbc.project.Project;
 import se.kth.hopsworks.user.model.Users;
+import se.kth.hopsworks.util.Settings;
 
 /**
  *
@@ -83,6 +88,24 @@ public class UserCertsFacade {
     
     public void persist(UserCerts uc) {
         em.persist(uc);
+    }
+    
+    public void putUser(int projectId, int userId){
+        try {
+            Path keystore = Paths.get( Settings.CA_DIR + "/" + projectId + "__" + userId + "_kstore.jks");
+            Path truststure = Paths.get( Settings.CA_DIR + "/" + projectId + "__" + userId + "_tstore.jks");
+            byte[] kStoreBytes = Files.readAllBytes(keystore);
+            byte[] tStoreBytes = Files.readAllBytes(truststure);
+        
+            UserCerts uc = new UserCerts(projectId, userId);
+            uc.setUserKey(kStoreBytes);
+            uc.setUserCert(tStoreBytes);
+            em.merge(uc);
+            em.persist(uc);
+            em.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void update(UserCerts uc) {
