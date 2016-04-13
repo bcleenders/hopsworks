@@ -1,5 +1,6 @@
 package se.kth.hopsworks.certificates;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,10 +91,10 @@ public class UserCertsFacade {
         em.persist(uc);
     }
     
-    public void putUser(int projectId, int userId){
+    public void putUserCerts(int projectId, int userId){
         try {
-            Path keystore = Paths.get( Settings.CA_DIR + "/" + projectId + "__" + userId + "_kstore.jks");
-            Path truststure = Paths.get( Settings.CA_DIR + "/" + projectId + "__" + userId + "_tstore.jks");
+            Path keystore = Paths.get(Settings.CA_DIR + "/" + projectId + "__" + userId + "_kstore.jks");
+            Path truststure = Paths.get(Settings.CA_DIR + "/" + projectId + "__" + userId + "_tstore.jks");
             byte[] kStoreBytes = Files.readAllBytes(keystore);
             byte[] tStoreBytes = Files.readAllBytes(truststure);
         
@@ -103,8 +104,8 @@ public class UserCertsFacade {
             em.merge(uc);
             em.persist(uc);
             em.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+              e.printStackTrace();
         }
     }
     

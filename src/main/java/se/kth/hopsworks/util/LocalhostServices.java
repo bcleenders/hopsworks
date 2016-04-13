@@ -78,16 +78,13 @@ public class LocalhostServices {
     return stdout;
   }
   
-  @Asynchronous
-  public static String createCertificates(String projectId, String userId, String glassfishIntCaDir) throws IOException {
+  public static String createUserCertificates(int projectId, int userId) throws IOException {
     
     String sslCertFile = Settings.CA_CERT_DIR + projectId + "__" + userId + ".cert.pem";
     String sslKeyFile = Settings.CA_KEY_DIR + projectId + "__" + userId + ".key.pem";
 
-    if ( new File(sslCertFile).exists() == false ||
-         new File(sslKeyFile).exists() == false) {
-             
-      throw new IOException("Certs exist already: " + sslCertFile + "&" + sslKeyFile);
+    if (new File(sslCertFile).exists() || new File(sslKeyFile).exists()) {
+      throw new IOException("Certs exist already: " + sslCertFile + " & " + sslKeyFile);
     }
     
     // Need to execute CreatingUserCerts.sh as 'root' using sudo. 
@@ -95,9 +92,8 @@ public class LocalhostServices {
     // TODO: Hopswork-chef needs to put script in glassfish directory!
     List<String> commands = new ArrayList<>();
     commands.add("/bin/bash");
-    commands.add("-c");
-    // Add CreatingCerts.sh to hopsworks-chef?
-    commands.add(glassfishIntCaDir + "/" + Settings.SSL_CREATE_CERT_SCRIPTNAME + " " + projectId + "__" + userId);
+    commands.add("-c");   
+    commands.add("/srv/glassfish/domain1/config/ca/intermediate" + "/" + Settings.SSL_CREATE_CERT_SCRIPTNAME + " " + projectId + "__" + userId);
 
     SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commands);
     String stdout = "", stderr = "";

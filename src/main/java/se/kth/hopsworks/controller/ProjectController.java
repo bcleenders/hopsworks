@@ -43,6 +43,7 @@ import se.kth.bbc.project.fb.InodeView;
 import se.kth.bbc.project.services.ProjectServiceEnum;
 import se.kth.bbc.project.services.ProjectServiceFacade;
 import se.kth.bbc.security.ua.UserManager;
+import se.kth.hopsworks.certificates.UserCertsFacade;
 import se.kth.hopsworks.dataset.Dataset;
 import se.kth.hopsworks.dataset.DatasetFacade;
 import se.kth.hopsworks.filters.AllowedRoles;
@@ -54,6 +55,7 @@ import se.kth.hopsworks.rest.ProjectInternalFoldersFailedException;
 import se.kth.hopsworks.user.model.SshKeys;
 import se.kth.hopsworks.user.model.Users;
 import se.kth.hopsworks.users.SshkeysFacade;
+import se.kth.hopsworks.util.LocalhostServices;
 import se.kth.hopsworks.util.ConfigFileGenerator;
 import se.kth.hopsworks.util.Settings;
 
@@ -97,6 +99,8 @@ public class ProjectController {
   private Settings settings;
   @EJB
   private HdfsLeDescriptorsFacade hdfsLeDescriptorFacade;
+  @EJB
+  private UserCertsFacade certificateBean;
 
   @PersistenceContext(unitName = "kthfsPU")
   private EntityManager em;
@@ -535,6 +539,15 @@ public class ProjectController {
               projectTeamFacade.removeProjectTeam(project, newMember);
               throw new EJBException("Could not add member to HDFS.");
             }
+            try{
+                // Create KeyStore and TrustStore Locally
+                LocalhostServices.createUserCertificates(project.getId(), user.getUid());
+                // Put the new UserCerts into the DB
+                certificateBean.putUserCerts(project.getId(), user.getUid());
+            } catch (IOException e) {
+                System.out.println("Could not create certificates for the new user");
+            }
+                     
             logger.log(Level.FINE, "{0} - member added to project : {1}.",
                     new Object[]{newMember.getEmail(),
                       project.getName()});
